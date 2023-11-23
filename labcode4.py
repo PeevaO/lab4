@@ -69,7 +69,6 @@ total_value = 0
 for item in stuff:
     total_value += stuff_dictionary[item][1]//stuff_dictionary[item][0]
 
-
 entire_value = sum([stuff_dictionary[item][1] for item in stuff_dictionary])
 
 for i in range(0, 3):
