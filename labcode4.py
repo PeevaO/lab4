@@ -1,24 +1,31 @@
 SET_POINTS = 10
 BACKPACK_SIZE = 9
-def get_area_and_value(stuff_dictionary):
-    area = [stuff_dictionary[item][0] for item in stuff_dictionary]
-    value = [stuff_dictionary[item][1] for item in stuff_dictionary]
+ROWS = 3
+COLS = 3
+
+def get_area_and_value(dict):
+    area = [dict[item][0] for item in dict]
+    value = [dict[item][1] for item in dict]
     return area, value
+
 def get_memtable(stuff_dictionary):
     area, value = get_area_and_value(stuff_dictionary)
     total_number = len(value)
-    matrix = [[0 for variable_area in range(BACKPACK_SIZE + 1)] for i in range(total_number + 1)]
+    matrix = [[0 for a in range(BACKPACK_SIZE + 1)] for i in range(total_number + 1)]
 
     for i in range(total_number + 1):
-        for variable_area in range(BACKPACK_SIZE + 1):
-            if i == 0 or variable_area == 0:
-                matrix[i][variable_area] = 0
+        mtrx_curr = matrix[i]
+        mtrx_prev = matrix[i - 1]
+        for a in range(BACKPACK_SIZE + 1):
+            if i == 0 or a == 0:
+                mtrx_curr[a] = 0
 
-            elif area[i - 1] <= variable_area:
-                matrix[i][variable_area] = max(value[i - 1] + matrix[i - 1][variable_area - area[i - 1]], matrix[i - 1][variable_area])
+            elif area[i - 1] <= a:
+                prev_area = area[i - 1]
+                mtrx_curr[a] = max(value[i - 1]+mtrx_prev[a - prev_area], mtrx_prev[a])
 
             else:
-                matrix[i][variable_area] = matrix[i - 1][variable_area]
+                mtrx_curr[a] = mtrx_prev[a]
     return matrix, area, value
 
 def get_selected_items_list(stuff_dictionary):
@@ -28,15 +35,15 @@ def get_selected_items_list(stuff_dictionary):
     variable_area = BACKPACK_SIZE
     items_list = []
 
-    for i in range(total_number, 0, -1):
+    for i in range(total_number-1, -1, -1):
         if res <= 0:
             break
-        if res == matrix[i - 1][variable_area]:
+        if res == matrix[i][variable_area]:
             continue
         else:
-            items_list.append((area[i - 1], value[i - 1]))
-            res -= value[i - 1]
-            variable_area -= area[i - 1]
+            items_list.append((area[i], value[i]))
+            res -= value[i]
+            variable_area -= area[i]
 
     selected_stuff = []
 
@@ -67,13 +74,13 @@ stuff = get_selected_items_list(stuff_dictionary)
 
 total_value = 0
 for item in stuff:
-    total_value += stuff_dictionary[item][1]//stuff_dictionary[item][0]
+    total_value += stuff_dictionary[item][1] // stuff_dictionary[item][0]
 
 entire_value = sum([stuff_dictionary[item][1] for item in stuff_dictionary])
 
-for i in range(0, 3):
-    if i % 2 == 0:
-        print(f'[{stuff[i*3]}], [{stuff[i*3 + 1]}], [{stuff[i*3 + 2]}]')
-    else:
-        print(f'[{stuff[i*3 + 2]}], [{stuff[i*3 + 1]}], [{stuff[i*3]}]')
-print(f'Итоговые очки выживания: {2 * total_value+SET_POINTS-entire_value}')
+stuff_size = len(stuff)
+for row_start in range(0, stuff_size, COLS):
+    row = stuff[row_start : row_start+COLS]
+    for item in row:
+         print(f'[{item}]', end =' ')
+    print()
