@@ -3,10 +3,12 @@ BACKPACK_SIZE = 9
 ROWS = 3
 COLS = 3
 
+
 def get_area_and_value(dict):
     area = [dict[item][0] for item in dict]
     value = [dict[item][1] for item in dict]
     return area, value
+
 
 def get_memtable(stuff_dictionary):
     area, value = get_area_and_value(stuff_dictionary)
@@ -27,6 +29,7 @@ def get_memtable(stuff_dictionary):
             else:
                 mtrx_curr[a] = mtrx_prev[a]
     return matrix, area, value
+
 
 def get_selected_items_list(stuff_dictionary):
     matrix, area, value = get_memtable(stuff_dictionary)
